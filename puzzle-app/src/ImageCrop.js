@@ -4,7 +4,6 @@ import 'react-image-crop/dist/ReactCrop.css';
 
 function ImageCrop(props) {
     const { src, tile, createImageList, imageName } = props || {};
-    console.log(src, tile);
     const { tileHeight, tileWidth, tileOffsetX, tileOffsetY, correctPosition } = tile || {};
 
     const [crop, setCrop] = useState({
@@ -37,15 +36,17 @@ function ImageCrop(props) {
         const base64Image = canvas.toDataURL('image/jpeg');
         setOutput(base64Image);
 
-        const downloadLink = document.createElement("a");
-        downloadLink.href = base64Image;
-        downloadLink.download = `${correctPosition}-${imageName}`;
-        downloadLink.click();
+        /**
+         * code for Download Images for save in folder
+         */
+        // const downloadLink = document.createElement("a");
+        // downloadLink.href = base64Image;
+        // downloadLink.download = `${correctPosition}-${imageName}`;
+        // downloadLink.click();
     };
 
-    
+
     useEffect(() => {
-        console.log(image);
         if (image?.src) {
             cropImageNow();
         }
@@ -69,23 +70,18 @@ function ImageCrop(props) {
     }
 
     const onCropChange = (crop) => {
-        console.log(crop);
         setCrop(crop)
     }
 
     return (
         <div className="App">
-            <center>
+            {src && (
                 <div>
-                    {src && (
-                        <div>
-                            <ReactCrop crop={crop} onChange={onCropChange} onComplete={cropImageNow} >
-                                <img src={src}  alt='' onLoad={onImageLoad} style={{display: "none"}} />
-                            </ReactCrop>
-                        </div>
-                    )}
+                    <ReactCrop crop={crop} onChange={onCropChange} onComplete={cropImageNow} >
+                        <img src={src} alt='' onLoad={onImageLoad} style={{ display: "none" }} />
+                    </ReactCrop>
                 </div>
-            </center>
+            )}
         </div>
     );
 }
