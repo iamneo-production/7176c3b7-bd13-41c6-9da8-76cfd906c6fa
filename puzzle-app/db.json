@@ -3,8 +3,9 @@
         {
             "id": 1,
             "title": "json-server",
-            "position": "typicode",
+            "position": "1",
             "image": ""
         }
+        
     ]
 }
