@@ -60,3 +60,16 @@
   margin: 10px;
   border: 1px solid black;
 }
+
+.tile-style {
+  display: flex; 
+  justify-content: center; 
+  flex-wrap: wrap; 
+  overflow: "hidden"; 
+  clear: "both";
+  cursor: none !important
+}
+
+.hide-pointer {
+  cursor: none !important;
+}

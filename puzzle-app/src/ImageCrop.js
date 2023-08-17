@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import { addCroppedImage } from './utils/databaseUtils';
+import { API_URL } from './utils/constants';
+import useFetch from './utils/useFetch';
 
 function ImageCrop(props) {
-    const { src, tile, createImageList, imageName } = props || {};
-    const { tileHeight, tileWidth, tileOffsetX, tileOffsetY, correctPosition } = tile || {};
+    const { src, tile, createImageList
+    } = props || {};
+    const { tileHeight, tileWidth, tileOffsetX, tileOffsetY
+    } = tile || {};
 
     const [crop, setCrop] = useState({
         unit: "px",
@@ -15,8 +20,24 @@ function ImageCrop(props) {
     });
     const [image, setImage] = useState(null);
     const [output, setOutput] = useState(null);
+    const [response, requestCall] = useFetch();
 
-    const cropImageNow = () => {
+    const saveImage = () => {
+        let url = `${API_URL}/puzzle`;
+        const body = {
+            image: output,
+            detail: {
+                position: tile.correctPosition,
+                x: tileOffsetX,
+                y: tileOffsetY,
+                height: tileHeight,
+                with: tileWidth
+            },
+        }
+        requestCall(url, "POST", body);
+    }
+
+    const cropImageNow = useCallback(() => {
         const canvas = document.createElement('canvas');
         const scaleX = image.naturalWidth / image.width;
         const scaleY = image.naturalHeight / image.height;
@@ -43,24 +64,26 @@ function ImageCrop(props) {
         // downloadLink.href = base64Image;
         // downloadLink.download = `${correctPosition}-${imageName}`;
         // downloadLink.click();
-    };
+    }, [crop.height, crop.width, crop.x, crop.y, image]);
 
 
     useEffect(() => {
         if (image?.src) {
             cropImageNow();
         }
-    }, [image?.src]);
+    }, [cropImageNow, image]);
 
     useEffect(() => {
         if (output) {
+            saveImage();
             createImageList(output);
         }
     }, [output]);
 
     function onImageLoad(e) {
         const crop = {
-            unit: "px", x: tileOffsetX,
+            unit: "px",
+            x: tileOffsetX,
             y: tileOffsetY,
             width: tileWidth,
             height: tileHeight
@@ -77,7 +100,9 @@ function ImageCrop(props) {
         <div className="App">
             {src && (
                 <div>
-                    <ReactCrop crop={crop} onChange={onCropChange} onComplete={cropImageNow} >
+                    <ReactCrop crop={crop} onChange={onCropChange} 
+                    // onComplete={cropImageNow} 
+                    >
                         <img src={src} alt='' onLoad={onImageLoad} style={{ display: "none" }} />
                     </ReactCrop>
                 </div>

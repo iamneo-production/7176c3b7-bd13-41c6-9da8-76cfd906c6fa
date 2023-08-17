@@ -23,17 +23,15 @@ export const ImageTile = memo(function ImageTile({
     accept,
     drop: onDrop,
     collect: (monitor) => ({
-      isOver: monitor.isOver(),
-      canDrop: monitor.canDrop()
+      // isOver: monitor.isOver(),
+      // canDrop: monitor.canDrop()
     })
   });
-  // const isActive = isOver && canDrop;
+  const isActive = isOver && canDrop;
   let backgroundColor = "#222";
-  // if (isActive) {
-  //   backgroundColor = "darkgreen";
-  // } else if (canDrop) {
-  //   backgroundColor = "darkkhaki";
-  // }
+  if (isActive || canDrop) {
+    backgroundColor = "#222";
+  }
   return (
     <div ref={drop} style={{ ...style, backgroundColor }} data-testid="ImageTile">
       {!lastDroppedItem && 1}

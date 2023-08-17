@@ -1,11 +1,8 @@
 import update from 'immutability-helper';
 import { memo, useCallback, useContext, useEffect, useState } from 'react';
-// import { NativeTypes } from 'react-dnd-html5-backend';
-// import { Box } from './Box.js'
 import { ImageTile } from './ImageTile.js';
 import { tileContext } from '../context/tilesContext.js';
 import { Box } from './Box.js';
-// import { Box } from './Box.js';
 
 export const Container = memo(function Container() {
     const context = useContext(tileContext) || {};
@@ -27,7 +24,7 @@ export const Container = memo(function Container() {
             setBoxes(cropedBoxes);
         }
 
-    }, [tiles, croppedImages, rows, columns]);
+    }, [tiles, croppedImages]);
 
     const isDropped = (boxName) => droppedBoxNames.indexOf(boxName) > -1;
 
@@ -51,13 +48,12 @@ export const Container = memo(function Container() {
     );
 
     return (
-        <div>
+        <div className='hide-pointer'>
             {imageSize && imageTiles &&
-                <div style={{
-                    display: "flex", justifyContent: "center", flexWrap: "wrap", overflow: 'hidden', clear: 'both',
-                    height: `${imageSize.height + rows}px`, width: `${imageSize.width + columns}px`
+                <div className="tile-style" style={{
+                    height: `${imageSize?.height + rows}px`, width: `${imageSize?.width + columns}px`
                 }}>
-                    {imageTiles && imageTiles.map(({ accepts, lastDroppedItem, tileHeight, tileWidth }, index) => (
+                    {imageTiles?.map(({ accepts, lastDroppedItem, tileHeight, tileWidth }, index) => (
                         <ImageTile
                             accept={accepts}
                             lastDroppedItem={lastDroppedItem}
@@ -76,7 +72,7 @@ export const Container = memo(function Container() {
                         name={image}
                         type={type}
                         isDropped={isDropped(image)}
-                        key={index}
+                        key={type}
                     />
                 ))}
             </div>

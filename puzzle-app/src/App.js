@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import './App.css';
-import React
-, { useCallback, useEffect, useState }
-  from 'react';
-import ImageCrop from './ImageCrop';
+import React, { useCallback, useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import Example from './components/Example';
 import { tileContext } from './context/tilesContext';
+import { addCroppedImage, getAllCroppedImages } from './utils/databaseUtils';
+import ImageCrops from './components/ImageCrops';
+import { API_URL } from './utils/constants';
+import useFetch from './utils/useFetch';
 
 function App() {
   const [tiles, setTiles] = useState(undefined)
@@ -15,13 +16,12 @@ function App() {
   const [croppedImages, setCroppedImages] = useState([]);
   const [imageName, setImageName] = useState("");
 
-  const [rows] = useState(3);
-  const [columns] = useState(3);
+  const [rows] = useState(4);
+  const [columns] = useState(4);
+  // const url = `${API_URL}/puzzle`;
 
-
-  const createImageList = (newImage) => {
-    setCroppedImages((prev) => [...prev, newImage]);
-  }
+  // const puzzle = getAllCroppedImages(url);
+  // console.log(puzzle);
 
   const selectImage = (file) => {
     setImageName(file.name);
@@ -47,9 +47,19 @@ function App() {
 
   useEffect(() => {
     const image = new Image()
-    image.onload = () => onImageLoaded(image)
+    image.onload = () => onImageLoaded(image);
     image.src = src
   }, [src]);
+
+  // useEffect(() => {
+  //   if(croppedImages) {
+  //     const url = `${API_URL}/puzzle`;
+  //     let postData = {
+  //       images: croppedImages,
+  //       position: tiles
+  //     }
+  //   }
+  // }, [croppedImages]);
 
   return (
     <tileContext.Provider value={{ tiles, rows, columns, croppedImages }}>
@@ -58,9 +68,7 @@ function App() {
         <DndProvider backend={HTML5Backend}>
           <Example />
         </DndProvider>
-        {tiles && tiles.map((tile) =>
-          <ImageCrop key={tile.correctPosition} src={src} tile={tile} createImageList={createImageList} imageName={imageName} />
-        )}
+        <ImageCrops src={src} setCroppedImages={setCroppedImages} imageName={imageName} />
       </div>
     </tileContext.Provider>
   );
